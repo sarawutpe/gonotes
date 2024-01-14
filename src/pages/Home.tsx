@@ -1,5 +1,5 @@
 import { useEffect, useCallback, createRef, useState } from 'react';
-// import chrome from 'webextension-polyfill';
+import chrome from 'webextension-polyfill';
 import debounce from 'lodash.debounce';
 import EditorJS from '@/components/EditorJS';
 import TextEditorToolbar, { TextEditorToolbarRef } from '@/pages/TextEditorToolbar';
@@ -16,17 +16,16 @@ const Home = () => {
   };
 
   const handleNoteDebounceChange = debounce(async (content: string) => {
-    // await chrome.storage.sync.set({ NOTE: content });
-    console.log(content);
+    await chrome.storage.sync.set({ NOTE: content });
     if (textEditorToolbarRef.current) {
       textEditorToolbarRef.current.handleSetLoading(false);
     }
-  }, 200);
+  }, 100);
 
   const handleRestoreNote = useCallback(async () => {
     try {
-      // const { NOTE } = await chrome.storage.sync.get(['NOTE']);
-      setContent('');
+      const { NOTE } = await chrome.storage.sync.get(['NOTE']);
+      setContent(NOTE);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -38,7 +37,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="container flex flex-col justify-center w-full h-full max-w-[450px] relative p-2 m-auto">
+      <div className="container flex flex-col justify-center w-full h-full max-w-[450px] relative p-[0.8rem] m-auto">
         <TextEditorToolbar ref={textEditorToolbarRef} />
         <EditorJS value={content} onChange={handleNoteChange} />
       </div>

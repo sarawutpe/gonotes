@@ -18,7 +18,7 @@ const TextEditorToolbar = forwardRef<TextEditorToolbarRef, TextEditorToolbarProp
   return (
     <div>
       <div className="w-full flex justify-between">
-        <div className="">Notes</div>
+        <p className='text-base font-bold'>โน้ต</p>
         <div className="relative w-[30px] h-[30px]">
           {isLoading ? (
             <div className="relative fadeIn" role="status">

@@ -27,10 +27,28 @@ class EditorJS extends Component<EditorEditorJSProps> {
     }
   }
 
+  removeStyles(html: string) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    // Remove all style elements
+    const styleElements = doc.querySelectorAll('style');
+    styleElements.forEach((styleElement) => styleElement.remove());
+
+    // Remove inline styles from all elements
+    const allElements = doc.querySelectorAll('*');
+    allElements.forEach((element) => element.removeAttribute('style'));
+
+    // Serialize the modified document back to HTML
+    const cleanedHtml = new XMLSerializer().serializeToString(doc);
+
+    return cleanedHtml;
+  }
+
   handleChange = () => {
     if (this.editorRef.current) {
       const contentHtml = this.editorRef.current.innerHTML;
-      this.props.onChange(contentHtml);
+      const cleanedHtml = this.removeStyles(contentHtml);
+      this.props.onChange(cleanedHtml);
     }
   };
 
