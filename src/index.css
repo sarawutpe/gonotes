@@ -110,42 +110,8 @@ button:focus-visible {
   font-weight: 500;
 }
 
-.editorjs.editorjs-blank::before {
-  color: rgba(0, 0, 0, 0.6);
-  content: attr(data-placeholder);
-  font-style: italic;
-  left: 15px;
-  pointer-events: none;
-  position: absolute;
-  right: 15px;
+
+.icon-button {
+  cursor: pointer;
 }
 
-.editorjs::-webkit-scrollbar {
-  width: 16px;
-}
-
-.editorjs::-webkit-scrollbar-thumb {
-  background-clip: padding-box;
-  background-color: rgba(31, 31, 31, 0.16);
-  border-radius: 8px;
-  border: 1px solid transparent;
-  box-shadow: none;
-  height: 185px;
-  max-height: 33%;
-}
-
-.editorjs::-webkit-scrollbar-thumb {
-  background: rgb(218, 220, 224);
-  background-clip: padding-box;
-  border: 4px solid transparent;
-  border-radius: 8px;
-  box-shadow: none;
-  min-height: 50px;
-}
-
-.editorjs::-webkit-scrollbar-track {
-  background: transparent;
-  border: none;
-  margin-bottom: 6px;
-  margin-top: 6px;
-}
