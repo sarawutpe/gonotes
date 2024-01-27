@@ -1,4 +1,4 @@
-import { getChromeNote, setChromeNote } from '@services/webextension';
+// import { getChromeNote, setChromeNote } from '@services/webextension';
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -10,13 +10,13 @@ const Editor: React.FC = () => {
     handleDebounceChange(value);
   };
 
-  const handleDebounceChange = useCallback((value: string) => {
-    setChromeNote(value);
+  const handleDebounceChange = useCallback((_: string) => {
+    // setChromeNote(value);
   }, []);
 
   const handleRestoreNote = useCallback(async () => {
     try {
-      const note = await getChromeNote();
+      // const note = await getChromeNote();
       setNote(note);
     } catch (error) {
       console.log(error);

@@ -7,6 +7,7 @@ interface IconButtonProps {
   size?: string;
   disableRipple?: boolean;
   onClick?: () => void;
+  [key: string]: any;
 }
 
 const Container = styled.div<{ color?: string; size?: string; disableRipple?: boolean }>`
@@ -37,9 +38,15 @@ const Container = styled.div<{ color?: string; size?: string; disableRipple?: bo
 `;
 
 const IconButton: React.FC<IconButtonProps> = (props) => {
-  const { children, color = '', size = '', disableRipple = false, onClick } = props;
+  const { children, color = '', size = '', disableRipple = false, onClick, ...restProps } = props;
   return (
-    <Container color={color} size={size} disableRipple={disableRipple} onClick={onClick}>
+    <Container
+      color={color}
+      size={size}
+      disableRipple={disableRipple}
+      onClick={onClick}
+      {...restProps}
+    >
       <div className="icon">{children}</div>
     </Container>
   );

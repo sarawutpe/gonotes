@@ -55,6 +55,6 @@
 .ql-editor::-webkit-scrollbar-track {
   background: transparent;
   border: none;
-  margin-bottom: 6px;
-  margin-top: 6px;
+  margin-bottom: 4px;
+  margin-top: 4px;
 }

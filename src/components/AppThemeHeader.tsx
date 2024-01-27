@@ -55,7 +55,8 @@ const EditorThemeHeader: React.FC<EditorThemeHeaderProps> = (props) => {
         {isAllowdGoBack && <ChevronLeftIcon className="w-[24px] h-[24px] text-[#E2BF58]" />}
         <p className="text-base font-bold">{title}</p>
       </TitleWrapper>
-      {children}
+
+      <div className="flex gap-2">{children}</div>
     </Container>
   );
 };
