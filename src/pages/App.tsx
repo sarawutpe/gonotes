@@ -1,16 +1,18 @@
 import React from 'react';
 import NoteFolder from '@pages/NoteFolder/NoteFolder';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from '@pages/Home/Home';
+// import NotFound from '@pages/NotFound/NotFound';
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/note-folder/*" element={<NoteFolder />} />
+        <Route index path="*" element={<Home />} />
+        <Route path="/notefolder" element={<NoteFolder />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 };
+
 export default App;

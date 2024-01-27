@@ -1,13 +1,32 @@
-import React from 'react'
-import EditorHeader from './EditorHeader';
-import Editor from './Editor';
+import React from 'react';
+import Editor from '@pages/Home/Editor';
+import AppTheme from '@components/AppTheme';
+import AppThemeHeader from '@components/AppThemeHeader';
+import { CloudArrowUpIcon, FolderIcon } from '@heroicons/react/24/solid';
+import { useNavigate } from 'react-router-dom';
+import { paths } from '@utils/constant';
+import AppThemeContent from '@components/AppThemeContent';
+import IconButton from '@components/IconButton';
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="container flex flex-col justify-center w-full h-full max-w-[450px] relative m-auto bg-[#f3f2f8]">
-      <EditorHeader />
-      <Editor />
-    </div>
+    <AppTheme>
+      <AppThemeHeader>
+        <div className="flex gap-2">
+          <IconButton color="#E2BF58" size="24px" disableRipple>
+            <CloudArrowUpIcon />
+          </IconButton>
+          <IconButton color="#E2BF58" size="24px" onClick={() => navigate(paths.notefolder)} disableRipple>
+            <FolderIcon />
+          </IconButton>
+        </div>
+      </AppThemeHeader>
+      <AppThemeContent>
+        <Editor />
+      </AppThemeContent>
+    </AppTheme>
   );
 };
 

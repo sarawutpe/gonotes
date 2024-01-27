@@ -1,4 +1,4 @@
-import { getChromeNote, setChromeNote } from '@pages/Home/EditorUtil';
+import { getChromeNote, setChromeNote } from '@services/webextension';
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -17,7 +17,7 @@ const Editor: React.FC = () => {
   const handleRestoreNote = useCallback(async () => {
     try {
       const note = await getChromeNote();
-      // setNote(note);
+      setNote(note);
     } catch (error) {
       console.log(error);
     }
@@ -28,14 +28,12 @@ const Editor: React.FC = () => {
   }, [handleRestoreNote]);
 
   return (
-    <div className="quill-container p-2">
       <ReactQuill
         theme="snow"
         value={note}
         onChange={handleQuillChange}
         modules={{ toolbar: false }}
       />
-    </div>
   );
 };
 

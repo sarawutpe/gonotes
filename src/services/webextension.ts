@@ -5,8 +5,7 @@ export const chromeKey = {};
 
 export const setChromeNote = debounce(async (content: string) => {
   try {
-    console.log(content)
-    // await chrome.storage.sync.set({ GONOTE: content });
+    await chrome.storage.sync.set({ CONTEXT: content });
   } catch (error) {
     console.log(error);
   }
@@ -14,9 +13,8 @@ export const setChromeNote = debounce(async (content: string) => {
 
 export const getChromeNote = async () => {
   try {
-    const GONOTE = '';
-    // const { GONOTE } = await chrome.storage.sync.get(['GONOTE']);
-    return GONOTE || '';
+    const { CONTEXT } = await chrome.storage.sync.get(['CONTEXT']);
+    return CONTEXT || '';
   } catch (error) {
     console.log(error);
   }
