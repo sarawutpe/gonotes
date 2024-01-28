@@ -58,3 +58,40 @@
   margin-bottom: 4px;
   margin-top: 4px;
 }
+
+.ql-toolbar.ql-snow {
+  border: 0 !important;
+  padding: 4px 0 !important;
+}
+
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='1']:before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='1']:before {
+  content: 'H1' !important;
+}
+
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='2']:before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='2']:before {
+  content: 'H2' !important;
+}
+
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='3']:before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='3']:before {
+  content: 'H3' !important;
+}
+
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value='4']:before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value='4']:before {
+  content: 'H4' !important;
+}
+
+.ql-toolbar.ql-snow .ql-formats {
+  margin-right: 12px !important;
+}
+
+.ql-snow .ql-picker.ql-header {
+  width: 60px !important;
+}
+
+.ql-toolbar.ql-snow .ql-formats:last-child {
+  margin-right: 0;
+}

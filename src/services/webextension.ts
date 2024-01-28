@@ -1,113 +1,166 @@
+import {
+  GroupNote,
+  Note,
+  STORAGE_KEY_GROUP_NOTE,
+  STORAGE_KEY_NOTE,
+} from '@services/webextension.type';
 import dayjs from 'dayjs';
-// import debounce from 'lodash.debounce';
+import debounce from 'lodash.debounce';
 import { v4 as uuidv4 } from 'uuid';
-import browser from 'webextension-polyfill';
 
-export const chromeKey = {};
-
-const contextDB = {
-  contextNote: 'contextNote',
-  contextGroupNote: 'contextGroupNote',
+// Initialize
+export const OTHER_GROUP_NOTE = {
+  id: 'OTHER_GROUP',
+  name: 'Others',
+  createdDate: '',
+  updatedDate: '',
 };
 
-export interface Note {
-  id: string;
-  groupId: string;
-  content: string;
-  createdDate: string;
-  updatedDate: string;
-}
-
-export interface GroupNote {
-  id: string;
-  name: string;
-  createdDate: string;
-  updatedDate: string;
-}
-
-export const getChromGroupNote = async (): Promise<GroupNote[] | []> => {
-  const result = await browser.storage.local.get(contextDB.contextGroupNote);
-  return result[contextDB.contextGroupNote] || [];
+// Service Chrome Group Note
+export const chromeGetGroupNoteList = async (): Promise<GroupNote[] | []> => {
+  try {
+    const result = await chrome.storage.sync.get(STORAGE_KEY_GROUP_NOTE);
+    return [...result[STORAGE_KEY_GROUP_NOTE], OTHER_GROUP_NOTE] || [OTHER_GROUP_NOTE];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 };
 
-export const addChromGroupNote = async (name: string) => {
-  const note: GroupNote = {
-    id: uuidv4(),
-    name: name,
-    createdDate: dayjs().toISOString(),
-    updatedDate: dayjs().toISOString(),
-  };
+export const chromeAddGroupNote = async (name: string) => {
+  try {
+    const note: GroupNote = {
+      id: uuidv4(),
+      name: name,
+      createdDate: dayjs().toISOString(),
+      updatedDate: dayjs().toISOString(),
+    };
+    const currentContext = await chromeGetGroupNoteList();
+    const context = [...currentContext, note];
 
-  const currentContext = await getChromGroupNote();
-  const context = [...currentContext, note];
-
-  await browser.storage.local.set({
-    [contextDB.contextGroupNote]: context,
-  });
+    await chrome.storage.sync.set({ [STORAGE_KEY_GROUP_NOTE]: context });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-export const updateChromeGroupNote = async (id: string, name: string) => {
-  const currentContext = await getChromGroupNote();
-  const context = currentContext.map((item) => {
-    if (item.id === id) {
-      console.log(id)
-      return { ...item, name: name };
+export const chromeUpdateGroupNote = async (id: string, name: string) => {
+  try {
+    const currentContext = await chromeGetGroupNoteList();
+    const context = currentContext.map((item) => {
+      if (item.id === id) {
+        return { ...item, name: name };
+      }
+      return item;
+    });
+
+    await chrome.storage.sync.set({ [STORAGE_KEY_GROUP_NOTE]: context });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const chromeDeleteGroupNote = async (id: string) => {
+  try {
+    const currentContext = await chromeGetGroupNoteList();
+    const context = currentContext.filter((item) => item.id !== id);
+    await chrome.storage.sync.set({ [STORAGE_KEY_GROUP_NOTE]: context });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Service Chrome Note
+export const chromeGetNote = async (id?: string): Promise<Note | null> => {
+  try {
+    const result = await chrome.storage.sync.get(STORAGE_KEY_NOTE);
+    const noteList: Note[] = result[STORAGE_KEY_NOTE] || [];
+    if (!Array.isArray(noteList) || noteList.length === 0) return null;
+
+    if (id) {
+      const note = noteList.find((item) => item.id === id);
+      return note || null;
     }
-    return item;
-  });
 
-  await browser.storage.local.set({
-    [contextDB.contextGroupNote]: context,
-  });
+    return noteList[0];
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
 
-export const deleteChromeGroupNote = async (id: string) => {
-  const currentContext = await getChromGroupNote();
-  const context = currentContext.filter((item) => item.id !== id);
-  await browser.storage.local.set({
-    [contextDB.contextGroupNote]: context,
-  });
+export const chromeGetNoteList = async (): Promise<Note[] | []> => {
+  try {
+    const result = await chrome.storage.sync.get(STORAGE_KEY_NOTE);
+    return result[STORAGE_KEY_NOTE] || [];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 };
 
-// export const getChromeNote = async () => {
-//   try {
-//     const { context } = await chrome?.storage.sync.get(['context']);
-//     return context || '';
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+export const chromeAddNote = debounce(async (content: string) => {
+  try {
+    const note: Note = {
+      id: uuidv4(),
+      groupId: '',
+      content: content,
+      createdDate: dayjs().toISOString(),
+      updatedDate: dayjs().toISOString(),
+    };
+    const currentContext = await chromeGetNoteList();
+    const context = [...currentContext, note];
 
-// export const setChromeNote = debounce(async (content: string) => {
-//   try {
-//     const noteObj = await getChromeNote();
-//     const note: Note[] = JSON.parse(noteObj);
-//     if (typeof note !== 'object') return;
+    await chrome.storage.sync.set({ [STORAGE_KEY_NOTE]: context });
+    chromeGetNoteList();
+  } catch (error) {
+    console.log(error);
+  }
+}, 100);
 
-//     const noteData = await chrome.storage.sync.set({ context: content });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }, 100);
+export const chromeUpdateNote = debounce(async (id: string, content: string) => {
+  try {
+    const currentContext = await chromeGetNoteList();
+    if (!Array.isArray(currentContext) || currentContext.length === 0) return;
+    const context = currentContext.map((item) => {
+      if (item.id === id) {
+        return { ...item, content: content };
+      }
+      return item;
+    });
 
-// export const addChromNote = async (content: string) => {
-//   const note: Note = {
-//     id: uuidv4(),
-//     groupId: '',
-//     content: content,
-//     createdDate: dayjs().toISOString(),
-//     updatedDate: dayjs().toISOString(),
-//   };
+    await chrome.storage.sync.set({ [STORAGE_KEY_NOTE]: context });
+  } catch (error) {
+    console.log(error);
+  }
+}, 100);
 
-//   const currentContext = await getChromeNote();
-//   const context = [...currentContext, note];
-//   await browser.storage.local.set({ context: context });
-// };
+export const chromeDeleteNote = async (id: string) => {
+  try {
+    const currentContext = await chromeGetNote();
+    if (!currentContext || !Array.isArray(currentContext)) return;
+    const context = currentContext.filter((item) => item.id !== id);
+    await chrome.storage.sync.set({ [STORAGE_KEY_NOTE]: context });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-// export const updateChromNote = async (content: string) => {
-//   const noteObj = await getChromeNote();
-//   const note: Note[] = JSON.parse(noteObj);
-//   if (typeof note !== 'object') return;
+export const chromeNoteUpdateGroupId = async (id: string, groupId: string) => {
+  try {
+    const currentContext = await chromeGetNoteList();
+    if (!Array.isArray(currentContext) || currentContext.length === 0) return;
+    const context = currentContext.map((item) => {
+      if (item.id === id) {
+        return { ...item, groupId: groupId };
+      }
+      return item;
+    });
 
-//   await chrome.storage.sync.set({ context: content });
-// };
+    await chrome.storage.sync.set({ [STORAGE_KEY_NOTE]: context });
+
+    console.log('ok new group', groupId);
+  } catch (error) {
+    console.log(error);
+  }
+};

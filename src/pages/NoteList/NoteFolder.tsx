@@ -159,8 +159,8 @@ const NoteFolder: React.FC = () => {
                   </div>
                   <div className="flex">
                     {!isToggleSetting ? (
-                      <div className="flex items-center">
-                        <p className="text-base text-gray-400">0</p>
+                      <div className="flex">
+                        <p className="text-gray-500">0</p>
                         <ChevronRightIcon className="w-[24px] h-[24px] text-[#E2BF58]" />
                       </div>
                     ) : (
