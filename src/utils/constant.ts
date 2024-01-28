@@ -4,5 +4,8 @@ export enum StorageKeys {
 
 export const paths = {
   home: 'path',
-  notefolder: 'notefolder',
+  notefolder: {
+    index: 'notefolder',
+    mypage: 'mynote/:groupId',
+  },
 };

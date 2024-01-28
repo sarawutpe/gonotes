@@ -1,6 +1,9 @@
+import { setGroupNoteData } from '@redux/features/noteReducer';
+import { store } from '@redux/store';
 import {
   GroupNote,
   Note,
+  GroupNoteData,
   STORAGE_KEY_GROUP_NOTE,
   STORAGE_KEY_NOTE,
 } from '@services/webextension.type';
@@ -9,6 +12,8 @@ import debounce from 'lodash.debounce';
 import { v4 as uuidv4 } from 'uuid';
 
 // Initialize
+export const initialize = () => {};
+
 export const OTHER_GROUP_NOTE = {
   id: 'OTHER_GROUP',
   name: 'Others',
@@ -17,10 +22,24 @@ export const OTHER_GROUP_NOTE = {
 };
 
 // Service Chrome Group Note
-export const chromeGetGroupNoteList = async (): Promise<GroupNote[] | []> => {
+export const chromeGetGroupNoteList = async (): Promise<GroupNoteData[] | []> => {
   try {
-    const result = await chrome.storage.sync.get(STORAGE_KEY_GROUP_NOTE);
-    return [...result[STORAGE_KEY_GROUP_NOTE], OTHER_GROUP_NOTE] || [OTHER_GROUP_NOTE];
+    const groupNoteResult = await chrome.storage.sync.get(STORAGE_KEY_GROUP_NOTE);
+    const noteResult = await chrome.storage.sync.get(STORAGE_KEY_NOTE);
+    const groupNoteList: GroupNote[] = [
+      ...groupNoteResult[STORAGE_KEY_GROUP_NOTE],
+      OTHER_GROUP_NOTE,
+    ] || [OTHER_GROUP_NOTE];
+    const noteList: Note[] = noteResult[STORAGE_KEY_NOTE] || [];
+
+    const data: GroupNoteData[] = groupNoteList.map((group) => ({
+      ...group,
+      notes: noteList.filter((note) => note.groupId === group.id),
+    }));
+
+    store.dispatch(setGroupNoteData(data));
+
+    return data;
   } catch (error) {
     console.log(error);
     return [];
@@ -79,9 +98,11 @@ export const chromeGetNote = async (id?: string): Promise<Note | null> => {
 
     if (id) {
       const note = noteList.find((item) => item.id === id);
+      console.log(note)
       return note || null;
     }
 
+    console.log(noteList[0])
     return noteList[0];
   } catch (error) {
     console.log(error);
@@ -92,6 +113,7 @@ export const chromeGetNote = async (id?: string): Promise<Note | null> => {
 export const chromeGetNoteList = async (): Promise<Note[] | []> => {
   try {
     const result = await chrome.storage.sync.get(STORAGE_KEY_NOTE);
+    console.log(result[STORAGE_KEY_NOTE] || [])
     return result[STORAGE_KEY_NOTE] || [];
   } catch (error) {
     console.log(error);
@@ -101,8 +123,9 @@ export const chromeGetNoteList = async (): Promise<Note[] | []> => {
 
 export const chromeAddNote = debounce(async (content: string) => {
   try {
+    const objectId = uuidv4();
     const note: Note = {
-      id: uuidv4(),
+      id: objectId,
       groupId: '',
       content: content,
       createdDate: dayjs().toISOString(),
@@ -110,11 +133,14 @@ export const chromeAddNote = debounce(async (content: string) => {
     };
     const currentContext = await chromeGetNoteList();
     const context = [...currentContext, note];
-
     await chrome.storage.sync.set({ [STORAGE_KEY_NOTE]: context });
-    chromeGetNoteList();
+
+    chromeGetNoteList()
+
+    return objectId;
   } catch (error) {
     console.log(error);
+    return ''
   }
 }, 100);
 

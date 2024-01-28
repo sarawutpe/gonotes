@@ -18,7 +18,8 @@ import {
   chromeGetGroupNoteList,
   chromeUpdateGroupNote,
 } from '@services/webextension';
-import { GroupNote } from '@services/webextension.type';
+import { GroupNote, GroupNoteData } from '@services/webextension.type';
+import { useNavigate } from 'react-router-dom';
 
 interface ActionButtonProps {
   type: 'button';
@@ -48,6 +49,8 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 );
 
 const NoteFolder: React.FC = () => {
+  const navigate = useNavigate();
+
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isToggleSetting, setIsToggleSetting] = useState(false);
   const [isConfirmDelete, setIsConfirmDelete] = useState(false);
@@ -57,7 +60,7 @@ const NoteFolder: React.FC = () => {
     createdDate: '',
     updatedDate: '',
   });
-  const [groupNoteList, setGroupNoteList] = useState<GroupNote[]>([]);
+  const [groupNoteList, setGroupNoteList] = useState<GroupNoteData[]>([]);
   const isAddMode = !selectedGroupNote.id;
   const isUpdateMode = !!selectedGroupNote.id;
 
@@ -131,7 +134,7 @@ const NoteFolder: React.FC = () => {
   return (
     <>
       <EditorTheme>
-        <EditorThemeHeader backPath="/">
+        <EditorThemeHeader backPath="home">
           <IconButton color="#E2BF58" size="24px" disableRipple onClick={handleOpenModal}>
             <FolderPlusIcon />
           </IconButton>
@@ -153,14 +156,18 @@ const NoteFolder: React.FC = () => {
                 <div
                   id={item.id}
                   className="flex justify-between text-gray-700 bg-white hover:bg-gray-50 w-full cursor-pointer px-3 py-2.5 border-b-2 border-gray-50"
+                  onClick={() => {
+                    if (isToggleSetting) return;
+                    navigate(`/notefolder/mynote/${item.id}`);
+                  }}
                 >
                   <div>
                     <p className="text-sm select-none line-clamp-1">{item.name}</p>
                   </div>
-                  <div className="flex">
+                  <div className="flex relative z-10">
                     {!isToggleSetting ? (
                       <div className="flex items-center">
-                        <p className="text-base text-gray-400">0</p>
+                        <p className="text-base text-gray-400">{item.notes.length}</p>
                         <ChevronRightIcon className="w-[24px] h-[24px] text-[#E2BF58]" />
                       </div>
                     ) : (

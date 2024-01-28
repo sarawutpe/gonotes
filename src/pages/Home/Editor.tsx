@@ -6,19 +6,11 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useDispatch } from 'react-redux';
 
-const modules = {
-  toolbar: {
-    container: [
-      [{ header: [1, 2, 3, 4] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      ['link'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['clean'],
-    ],
-  },
-};
+interface EditorProps {
+  id?: string;
+}
 
-const Editor: React.FC = () => {
+const Editor: React.FC<EditorProps> = ({ id }) => {
   const [note, setNote] = useState<Note>({
     id: '',
     groupId: '',
@@ -31,8 +23,9 @@ const Editor: React.FC = () => {
 
   const handleQuillChange = (content: string) => {
     setNote({ ...note, content: content });
+
+    // Add a new note
     if (!note.id) {
-      // Add a new note
       chromeAddNote(content);
     } else {
       // Update note by id
@@ -40,25 +33,45 @@ const Editor: React.FC = () => {
     }
   };
 
-  const handleRestoreNote = useCallback(async () => {
+  const initialize = useCallback(async () => {
     try {
-      const note = await chromeGetNote();
+      const note = await chromeGetNote(id);
       if (note) {
-        console.log(note);
         setNote(note);
         dispatch(setCurrentNote(note));
       }
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   useEffect(() => {
-    handleRestoreNote();
-  }, [handleRestoreNote]);
+    initialize();
+  }, [initialize]);
 
+  useEffect(() => {
+    if (id) {
+      initialize()
+    }
+  }, [id, initialize])
+  
   return (
-    <ReactQuill theme="snow" value={note.content} onChange={handleQuillChange} modules={modules} />
+    <ReactQuill
+      theme="snow"
+      value={note.content}
+      onChange={handleQuillChange}
+      modules={{
+        toolbar: {
+          container: [
+            [{ header: [1, 2, 3, 4] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            ['link'],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['clean'],
+          ],
+        },
+      }}
+    />
   );
 };
 

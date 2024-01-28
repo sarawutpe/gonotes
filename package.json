@@ -7,7 +7,7 @@
     "dev": "vite",
     "build-web": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && copy src\\manifest.json dist\\",
     "build:manifest": "tsc && vite build && copy src\\manifest.json dist\\",
     "preview": "vite preview",
     "lint:script": "eslint --ext .ts,vue --ignore-path .gitignore ."
