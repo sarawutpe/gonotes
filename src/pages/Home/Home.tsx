@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import Editor from '@pages/Home/Editor';
+import React, { useState, useRef } from 'react';
+import NoteEditor, { NoteEditorRef } from '@pages/Home/NoteEditor';
 import AppTheme from '@components/AppTheme';
 import AppThemeHeader from '@components/AppThemeHeader';
 import { useParams } from 'react-router-dom';
@@ -8,27 +8,29 @@ import NoteFolderListbox from '@pages/Home/NoteFolderListbox';
 import NoteHeader from '@pages/Home/NoteHeader';
 
 const Home: React.FC = () => {
-  const params = useParams();
-  const [noteId, setNoteId] = useState('');
+  const { noteId } = useParams();
+  const noteEditorRef = useRef<NoteEditorRef | null>(null);
   const [isOpenModalNoteFolder, setIsOpenModalNoteFolder] = useState<boolean>(false);
 
   const handleModalNoteFolder = () => {
     setIsOpenModalNoteFolder((prev) => !prev);
   };
 
-  useEffect(() => {
-    if (params.noteId) {
-      setNoteId(params.noteId);
-    }
-  }, [params.noteId]);
+  const handleOnCallbackAddNewNote = () => {
+    if (!noteEditorRef.current) return;
+    noteEditorRef.current.onAddNewNote();
+  };
 
   return (
     <AppTheme>
       <AppThemeHeader>
-        <NoteHeader onClickModalNoteFolder={handleModalNoteFolder} />
+        <NoteHeader
+          onCallbackOpenModalNoteFolder={handleModalNoteFolder}
+          onCallbackAddNewNote={handleOnCallbackAddNewNote}
+        />
       </AppThemeHeader>
       <AppThemeContent>
-        <Editor id={noteId} />
+        <NoteEditor ref={noteEditorRef} noteId={noteId} />
       </AppThemeContent>
       <NoteFolderListbox open={isOpenModalNoteFolder} onClose={handleModalNoteFolder} />
     </AppTheme>

@@ -8,14 +8,14 @@ import { RootState } from '@redux/store';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const MyNote: React.FC = () => {
-  const { groupId } = useParams();
+  const { groupId = '' } = useParams();
   const navigate = useNavigate();
   const groupNoteDataList = useSelector((state: RootState) => state.note.groupNoteDataList);
   const noteList = groupNoteDataList.find((item) => item.id === groupId)?.notes ?? [];
 
   return (
     <EditorTheme>
-      <EditorThemeHeader backPath="notefolder" />
+      <EditorThemeHeader backPath="/notefolder" />
       <AppThemeContent>
         <div className="bg-white rounded-lg overflow-hidden">
           <div className="grid columns-1">
@@ -24,7 +24,7 @@ const MyNote: React.FC = () => {
                 key={note.id}
                 id={note.id}
                 className="flex justify-between text-gray-700 bg-white hover:bg-gray-50 w-full cursor-pointer px-3 py-2.5 border-b-2 border-gray-50"
-                onClick={() => navigate(`home/${note.id}`)}
+                onClick={() => navigate(`/home/${note.id}`)}
               >
                 <div>
                   <p className="text-sm select-none line-clamp-1">{note.content}</p>

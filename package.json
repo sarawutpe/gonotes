@@ -1,7 +1,7 @@
 {
   "name": "gonotes",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,7 @@
     "preview": "vite preview",
     "lint:script": "eslint --ext .ts,vue --ignore-path .gitignore ."
   },
+  "homepage": ".",
   "dependencies": {
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",

@@ -8,11 +8,12 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/home" element={<Home />} />
+        <Route path="*" element={<Home />} />
+        <Route index path="/home" element={<Home />} />
         <Route path="/home/:noteId" element={<Home />} />
         <Route path="/notefolder" element={<NoteFolder />} />
+        <Route path="/notefolder/mynote" element={<MyNote />} />
         <Route path="/notefolder/mynote/:groupId" element={<MyNote />} />
-        <Route index path="*" element={<Home />} />
       </Routes>
     </Router>
   );

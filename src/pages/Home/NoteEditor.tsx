@@ -1,16 +1,21 @@
 import { setCurrentNote } from '@redux/features/noteReducer';
 import { chromeAddNote, chromeGetNote, chromeUpdateNote } from '@services/webextension';
 import { Note } from '@services/webextension.type';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useDispatch } from 'react-redux';
 
-interface EditorProps {
-  id?: string;
+export interface NoteEditorRef {
+  onAddNewNote: () => void;
 }
 
-const Editor: React.FC<EditorProps> = ({ id }) => {
+interface NoteEditorProps {
+  noteId?: string;
+}
+
+const NoteEditor = forwardRef<NoteEditorRef, NoteEditorProps>((props, ref) => {
+  const { noteId } = props;
   const [note, setNote] = useState<Note>({
     id: '',
     groupId: '',
@@ -20,7 +25,6 @@ const Editor: React.FC<EditorProps> = ({ id }) => {
   });
 
   const dispatch = useDispatch();
-
   const handleQuillChange = (content: string) => {
     setNote({ ...note, content: content });
 
@@ -33,9 +37,20 @@ const Editor: React.FC<EditorProps> = ({ id }) => {
     }
   };
 
+  // Expose the function
+  useImperativeHandle(ref, () => ({
+    onAddNewNote: async () => {
+      const result = await chromeAddNote('');
+      if (result) {
+        setNote(result);
+        dispatch(setCurrentNote(result));
+      }
+    },
+  }));
+
   const initialize = useCallback(async () => {
     try {
-      const note = await chromeGetNote(id);
+      const note = await chromeGetNote(noteId);
       if (note) {
         setNote(note);
         dispatch(setCurrentNote(note));
@@ -43,18 +58,12 @@ const Editor: React.FC<EditorProps> = ({ id }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [dispatch, id]);
+  }, [dispatch, noteId]);
 
   useEffect(() => {
     initialize();
   }, [initialize]);
 
-  useEffect(() => {
-    if (id) {
-      initialize()
-    }
-  }, [id, initialize])
-  
   return (
     <ReactQuill
       theme="snow"
@@ -62,17 +71,11 @@ const Editor: React.FC<EditorProps> = ({ id }) => {
       onChange={handleQuillChange}
       modules={{
         toolbar: {
-          container: [
-            [{ header: [1, 2, 3, 4] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            ['link'],
-            [{ list: 'ordered' }, { list: 'bullet' }],
-            ['clean'],
-          ],
+          container: [[{ header: [1, 2, 3, 4] }], ['bold', 'italic', 'underline', 'strike'], ['link'], [{ list: 'ordered' }, { list: 'bullet' }], ['clean']],
         },
       }}
     />
   );
-};
+});
 
-export default Editor;
+export default NoteEditor;

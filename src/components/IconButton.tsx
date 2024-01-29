@@ -5,12 +5,12 @@ interface IconButtonProps {
   children?: React.ReactNode;
   color?: string;
   size?: string;
-  disableRipple?: boolean;
+  disableripple?: string;
   onClick?: () => void;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
-const Container = styled.div<{ color?: string; size?: string; disableRipple?: boolean }>`
+const Container = styled.div<{ color?: string; size?: string; disableripple?: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,7 +27,7 @@ const Container = styled.div<{ color?: string; size?: string; disableRipple?: bo
   }
 
   ${(props) =>
-    !props.disableRipple &&
+    props.disableripple === 'false' &&
     css`
       width: 30px;
       height: 30px;
@@ -38,15 +38,9 @@ const Container = styled.div<{ color?: string; size?: string; disableRipple?: bo
 `;
 
 const IconButton: React.FC<IconButtonProps> = (props) => {
-  const { children, color = '', size = '', disableRipple = false, onClick, ...restProps } = props;
+  const { children, color = '', size = '', disableripple = 'false', onClick, ...restProps } = props;
   return (
-    <Container
-      color={color}
-      size={size}
-      disableRipple={disableRipple}
-      onClick={onClick}
-      {...restProps}
-    >
+    <Container color={color} size={size} disableripple={disableripple} onClick={onClick} {...restProps}>
       <div className="icon">{children}</div>
     </Container>
   );

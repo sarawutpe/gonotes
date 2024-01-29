@@ -14,7 +14,7 @@ export interface GroupNote {
 }
 
 export interface GroupNoteData extends GroupNote {
-  notes: Note[] | []
+  notes: Note[]
 }
 
 export const STORAGE_KEY_NOTE = 'STORAGE_KEY_NOTE';

@@ -1,5 +1,5 @@
 {
-  "prettier.printWidth": 100,
+  "prettier.printWidth": 200,
   "prettier.singleQuote": true,
   "liveServer.settings.port": 5501,
 

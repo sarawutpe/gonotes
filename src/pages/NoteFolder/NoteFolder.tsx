@@ -134,15 +134,15 @@ const NoteFolder: React.FC = () => {
   return (
     <>
       <EditorTheme>
-        <EditorThemeHeader backPath="home">
-          <IconButton color="#E2BF58" size="24px" disableRipple onClick={handleOpenModal}>
+        <EditorThemeHeader backPath="/">
+          <IconButton color="#E2BF58" size="24px" disableripple="true" onClick={handleOpenModal}>
             <FolderPlusIcon />
           </IconButton>
           <IconButton
             className={classnames({ 'rotate-90': isToggleSetting })}
             color="#E2BF58"
             size="24px"
-            disableRipple
+            disableripple="true"
             onClick={handleToggleSetting}
           >
             <Cog6ToothIcon />

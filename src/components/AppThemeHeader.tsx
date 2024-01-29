@@ -17,7 +17,7 @@ const Container = styled.div`
   height: 40px;
 `;
 
-const TitleWrapper = styled.div<{ isHover?: boolean }>`
+const TitleWrapper = styled.div<{ ishover?: string }>`
   display: flex;
   align-items: center;
   transition-property: all;
@@ -29,7 +29,7 @@ const TitleWrapper = styled.div<{ isHover?: boolean }>`
   opacity: 1;
 
   ${(props) =>
-    props.isHover &&
+    props.ishover &&
     css`
       cursor: pointer;
       &:hover {
@@ -41,7 +41,6 @@ const TitleWrapper = styled.div<{ isHover?: boolean }>`
 const EditorThemeHeader: React.FC<EditorThemeHeaderProps> = (props) => {
   const { children, title = 'Go Notes', backPath } = props;
   const navigate = useNavigate();
-  const isAllowdGoBack = !!backPath;
 
   const handleGoBack = () => {
     if (backPath) {
@@ -51,8 +50,8 @@ const EditorThemeHeader: React.FC<EditorThemeHeaderProps> = (props) => {
 
   return (
     <Container>
-      <TitleWrapper isHover={isAllowdGoBack} onClick={handleGoBack}>
-        {isAllowdGoBack && <ChevronLeftIcon className="w-[24px] h-[24px] text-[#E2BF58]" />}
+      <TitleWrapper ishover={backPath ? 'true' : 'false'} onClick={handleGoBack}>
+        {backPath && <ChevronLeftIcon className="w-[24px] h-[24px] text-[#E2BF58]" />}
         <p className="text-base font-bold">{title}</p>
       </TitleWrapper>
 
